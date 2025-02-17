@@ -10,7 +10,7 @@ class DBConfig:
 
 
     def _set_all_name_configs(self) -> List[str]:
-        env_variables = [key for key in os.environ.keys() if key.startswith('DBCONFIG_')]
+        env_variables = [key for key in os.environ if key.startswith('DBCONFIG_')]
         return env_variables
 
     def get_config(self, db_name: Optional[str] = None, cursor_class: bool=True) -> Optional[Dict]:
