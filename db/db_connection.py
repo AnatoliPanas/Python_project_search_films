@@ -1,7 +1,27 @@
 import pymysql
-from pymysql.cursors import Cursor
+from pymysql.cursors import Cursor, DictCursor
 from pymysql.connections import Connection
-from typing import Optional, Dict
+from typing import Optional, Dict, Tuple
+
+
+class LoggingDictCursor(DictCursor):
+    def execute(self, query, params: Tuple = ()):
+
+        print(f"Выполняется запрос: {query} с параметрами {params}")
+        # # Записываем запрос в таблицу query_logs
+        # try:
+        #     # Предполагается, что у нас уже есть соединение с БД
+        #     self._connection.ping(reconnect=True)  # Проверяем соединение
+        #     log_query = """
+        #     INSERT INTO query_logs (query, params)
+        #     VALUES (%s, %s)
+        #     """
+        #     self._connection.cursor().execute(log_query, (query, params))
+        #     self._connection.commit()
+        # except pymysql.MySQLError as e:
+        #     print(f"Ошибка при записи лога в базу данных: {e}")
+
+        return super().execute(query, params)
 
 class DBConnector:
 
@@ -32,6 +52,19 @@ class DBConnector:
 
     def get_cursor(self) -> Optional[Cursor]:
         return self._cursor
+
+    def commit(self):
+        try:
+            self._connection.commit()
+        except pymysql.Error as e:
+            print(f"Ошибка при вставке в БД: {e}")
+            self._connection.rollback()
+
+    def rollback(self):
+        try:
+            self._connection.rollback()
+        except pymysql.Error as e:
+            print(f"Ошибка при вставке в БД: {e}")
 
     def close(self):
         if self._connection.open:

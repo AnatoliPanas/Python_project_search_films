@@ -1,7 +1,8 @@
 import os, ast
 from dotenv import load_dotenv
-from pymysql.cursors import DictCursor
 from typing import Optional, Dict, List
+from db.db_connection import LoggingDictCursor
+
 
 class DBConfig:
     def __init__(self):
@@ -20,7 +21,7 @@ class DBConfig:
                 try:
                     dbconfig_dict = ast.literal_eval(dbconfig_str)
                     if cursor_class:
-                        dbconfig_dict['cursorclass'] = DictCursor
+                        dbconfig_dict['cursorclass'] = LoggingDictCursor
                     return dbconfig_dict
                 except (ValueError, SyntaxError) as e:
                     print(f"Ошибка, при попытке преобразовать конфигурацию {db_name} в словарь: {e}")
