@@ -8,8 +8,8 @@ class DBConnector:
         self._cursor = self._set_cursor()
 
     def _set_connection(self):
-        connecion = pymysql.connect(**self._dbconfig)
-        return connecion
+        connection = pymysql.connect(**self._dbconfig)
+        return connection
 
     def _set_cursor(self):
         cursor = self._connection.cursor()
