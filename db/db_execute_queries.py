@@ -1,5 +1,5 @@
 import pymysql
-from db_connection import DBConnector
+from db.db_connection import DBConnector
 from typing import List, Tuple, Optional, Dict
 
 
