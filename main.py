@@ -1,8 +1,30 @@
 import tkinter as tk
 from conrlols.MultiSelectCombobox import MultiSelectCombobox
+from db.db_configs import DBConfig
+from db.db_execute_queries import DBExecuteQueries
+from db.sql_queries import CategoryQueries, FilmQueries
 
-genres = ['Action','Animation','Children','Classics','Comedy','Documentary','Drama','Family','Foreign','Games','Horror','Music','New','Sci-Fi','Sports','Travel']
-years = [str(year) for year in range(1960, 2025)]
+def get_query_handler(par_db_name):
+    obj_dbconfig = DBConfig()
+    dbconfig = obj_dbconfig.get_config(db_name=par_db_name)
+    query_handler = DBExecuteQueries(dbconfig)
+    return query_handler
+
+def get_record(par_query_handler, par_query, **params):
+    res = par_query_handler.get_record(query=par_query)
+    return res
+
+handler = get_query_handler("DBCONFIG_SAKILA")
+# genres = ['Action','Animation','Children','Classics','Comedy','Documentary','Drama','Family','Foreign','Games','Horror','Music','New','Sci-Fi','Sports','Travel']
+record = get_record(handler, CategoryQueries.GET_ALL_CATEGORYS)
+genres = str(record["name_categorys"]).split(',')
+
+# years = [str(year) for year in range(1960, 2025)]
+record = get_record(handler, FilmQueries.GET_ALL_YEAR)
+years = str(record["release_year"]).split(',')
+
+print(handler.get_bd_name())
+
 # Функция для изменения цвета кнопки при наведении
 def on_enter(event, background):
     event.widget.config(bg=background)  # Цвет при наведении

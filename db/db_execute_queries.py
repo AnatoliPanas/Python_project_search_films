@@ -5,6 +5,7 @@ from typing import List, Tuple, Optional, Dict
 
 class DBExecuteQueries(DBConnector):
     def __init__(self, dbconfig):
+        self._dbconfig = dbconfig
         super().__init__(dbconfig)
 
     def get_records(self, query: str, params: Tuple = ()) -> Optional[List]:
@@ -37,5 +38,8 @@ class DBExecuteQueries(DBConnector):
             print(f"Ошибка выполнения запроса: {e}")
             self.rollback()
             return False
+
+    def get_bd_name(self):
+        return self._dbconfig.get("database")
 
 
