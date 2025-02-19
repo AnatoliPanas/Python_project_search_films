@@ -67,7 +67,7 @@ class DBConnector:
             print(f"Ошибка при вставке в БД: {e}")
 
     def close(self):
-        if self._connection.open:
+        if hasattr(self, '_connection') and hasattr(self, '_cursor'):
             self._cursor.close()
             self._connection.close()
             print("Подключение к БД и курсор закрыты.")

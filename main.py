@@ -20,6 +20,7 @@ def on_leave(event, background):
 
 # Функция выхода из программы
 def exit_program():
+    handler.close()
     root.quit()
 
 def search():
@@ -122,6 +123,11 @@ year_label.grid(row=0, column=2, sticky="w", padx=10, pady=1)
 year_cb = MultiSelectCombobox(label_frame, years)
 year_cb.frame.grid(row=1, column=2, padx=10, pady=1, sticky="n")
 
+db_name_label = tk.Label(bottom_frame, text="БД:", font=("Arial", 10))
+db_name_label.config(text="БД: " + handler.get_bd_name())
+db_name_label.grid(row=0, column=0, sticky="w", padx=10, pady=1)
+
+
 search_button = tk.Button(bottom_frame,
                           text="Поиск",
                           command=search,
@@ -130,9 +136,33 @@ search_button = tk.Button(bottom_frame,
                           bg="#3e8e41",
                           height=2,
                           width=10)
-search_button.grid(row=0, column=0, padx=10, pady=10)
+search_button.grid(row=0, column=1, padx=10, pady=10)
 search_button.bind("<Enter>", lambda event: on_enter(event, "#4CAF50"))
 search_button.bind("<Leave>", lambda event: on_leave(event, "#3e8e41"))
+
+report_button = tk.Button(bottom_frame,
+                        text="Поп. запросы",
+                        command=exit_program,
+                        font=("Arial", 12, "bold"),
+                        fg="white",
+                        bg="#3e8e41",
+                        height=2,
+                        width=10)
+report_button.grid(row=0, column=2, padx=10, pady=10)
+report_button.bind("<Enter>", lambda event: on_enter(event, "#4CAF50"))
+report_button.bind("<Leave>", lambda event: on_leave(event, "#3e8e41"))
+
+report_button = tk.Button(bottom_frame,
+                        text="В файл",
+                        command=exit_program,
+                        font=("Arial", 12, "bold"),
+                        fg="white",
+                        bg="#3e8e41",
+                        height=2,
+                        width=10)
+report_button.grid(row=0, column=3, padx=10, pady=10)
+report_button.bind("<Enter>", lambda event: on_enter(event, "#4CAF50"))
+report_button.bind("<Leave>", lambda event: on_leave(event, "#3e8e41"))
 
 exit_button = tk.Button(bottom_frame,
                         text="Выход",
@@ -142,7 +172,7 @@ exit_button = tk.Button(bottom_frame,
                         bg="#D32F2F",
                         height=2,
                         width=10)
-exit_button.grid(row=0, column=1, padx=10, pady=10)
+exit_button.grid(row=0, column=4, padx=10, pady=10)
 exit_button.bind("<Enter>", lambda event: on_enter(event, "#f44336"))
 exit_button.bind("<Leave>", lambda event: on_leave(event, "#D32F2F"))
 
