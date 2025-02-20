@@ -1,8 +1,8 @@
 class CategoryQueries:
-    GET_ALL_CATEGORYS = "select group_concat(c.name) name_categorys from category c"
+    GET_ALL_CATEGORYS = "select c.name name_categorys from category c order by c.name"
 
 class FilmQueries:
-    GET_ALL_YEAR = "select distinct release_year from film order by release_year"
+    GET_ALL_YEAR = "select distinct release_year release_year from film order by release_year desc"
     GET_FILM_BY_CATEGORYS = """SELECT 
                                 f.title,
                                 f.description,

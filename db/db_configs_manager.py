@@ -4,7 +4,7 @@ from typing import Optional, Dict, List
 from db.db_connection import LoggingDictCursor
 
 
-class DBConfig:
+class DBConfigManager:
     def __init__(self):
         load_dotenv()
         self._all_name_configs = self._set_all_name_configs()

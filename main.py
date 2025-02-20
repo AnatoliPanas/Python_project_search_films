@@ -1,12 +1,12 @@
 import tkinter as tk
 from conrlols.MultiSelectCombobox import MultiSelectCombobox
-from db.db_configs import DBConfig
+from db.db_configs_manager import DBConfigManager
 from db.db_queries_manager import DBQueriesManager
 from db.sql_queries import CategoryQueries, FilmQueries
 import re
 
 def get_query_handler(par_db_name):
-    obj_dbconfig = DBConfig()
+    obj_dbconfig = DBConfigManager()
     dbconfig = obj_dbconfig.get_config(db_name=par_db_name)
     query_handler = DBQueriesManager(dbconfig)
     return query_handler
@@ -75,11 +75,11 @@ def search():
 
 handler = get_query_handler("DBCONFIG_SAKILA")
 
-record = handler.get_record(query=CategoryQueries.GET_ALL_CATEGORYS)
-genres = str(record["name_categorys"]).split(',')
+record = handler.get_records(query=CategoryQueries.GET_ALL_CATEGORYS)
+genres = [name_category["name_categorys"] for name_category in record]
 
-record = handler.get_record(query=FilmQueries.GET_ALL_YEAR)
-years = str(record["release_year"]).split(',')
+record = handler.get_records(query=FilmQueries.GET_ALL_YEAR)
+years = [year["release_year"] for year in record]
 
 print(handler.get_bd_name())
 
@@ -131,48 +131,48 @@ db_name_label.grid(row=0, column=0, sticky="w", padx=10, pady=1)
 search_button = tk.Button(bottom_frame,
                           text="Поиск",
                           command=search,
-                          font=("Arial", 12, "bold"),
+                          font=("Arial", 10, "bold"),
                           fg="white",
                           bg="#3e8e41",
                           height=2,
                           width=10)
-search_button.grid(row=0, column=1, padx=10, pady=10)
+search_button.grid(row=0, column=1, padx=2, pady=10)
 search_button.bind("<Enter>", lambda event: on_enter(event, "#4CAF50"))
 search_button.bind("<Leave>", lambda event: on_leave(event, "#3e8e41"))
 
 report_button = tk.Button(bottom_frame,
                         text="Поп. запросы",
                         command=exit_program,
-                        font=("Arial", 12, "bold"),
+                        font=("Arial", 10, "bold"),
                         fg="white",
                         bg="#3e8e41",
                         height=2,
                         width=10)
-report_button.grid(row=0, column=2, padx=10, pady=10)
+report_button.grid(row=0, column=2, padx=2, pady=10)
 report_button.bind("<Enter>", lambda event: on_enter(event, "#4CAF50"))
 report_button.bind("<Leave>", lambda event: on_leave(event, "#3e8e41"))
 
 report_button = tk.Button(bottom_frame,
                         text="В файл",
                         command=exit_program,
-                        font=("Arial", 12, "bold"),
+                        font=("Arial", 10, "bold"),
                         fg="white",
                         bg="#3e8e41",
                         height=2,
                         width=10)
-report_button.grid(row=0, column=3, padx=10, pady=10)
+report_button.grid(row=0, column=3, padx=2, pady=10)
 report_button.bind("<Enter>", lambda event: on_enter(event, "#4CAF50"))
 report_button.bind("<Leave>", lambda event: on_leave(event, "#3e8e41"))
 
 exit_button = tk.Button(bottom_frame,
                         text="Выход",
                         command=exit_program,
-                        font=("Arial", 12, "bold"),
+                        font=("Arial", 10, "bold"),
                         fg="white",
                         bg="#D32F2F",
                         height=2,
                         width=10)
-exit_button.grid(row=0, column=4, padx=10, pady=10)
+exit_button.grid(row=0, column=4, padx=2, pady=10)
 exit_button.bind("<Enter>", lambda event: on_enter(event, "#f44336"))
 exit_button.bind("<Leave>", lambda event: on_leave(event, "#D32F2F"))
 
