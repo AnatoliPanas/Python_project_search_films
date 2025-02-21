@@ -17,8 +17,14 @@ class FilmQueries:
                                 --where
                                 --SET_PARAM_CATEGORYS  
                                 --SET_PARAM_YEARS
-                                --SET_PARAM_TEXT                                
+                                --(--SET_PARAM_TEXT )                                
                                 """
     SET_PARAM_CATEGORYS = " c.name IN (%s) and "
     SET_PARAM_YEARS = " f.release_year in (%s) and "
-    SET_PARAM_TEXT = " concat(f.title, f.description) like '%%%%{}%%%%' and "
+    # SET_PARAM_TEXT = " concat(f.title, f.description) like '%%%%{}%%%%'  "
+    SET_PARAM_TEXT = " concat(f.title, f.description) like %s "
+
+class SearchCriteriaFilm:
+    INSERT_CRITERIAFILM = """ insert
+                            into search_criteria_film(category_by_words, pquery)
+                            values(%s, %s)"""

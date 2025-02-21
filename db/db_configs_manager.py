@@ -1,7 +1,7 @@
 import os, ast
 from dotenv import load_dotenv
 from typing import Optional, Dict, List
-from db.db_connection import LoggingDictCursor
+from db.db_queries_manager import LoggingDictCursor
 
 
 class DBConfigManager:
