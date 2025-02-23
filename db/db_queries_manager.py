@@ -62,7 +62,7 @@ class DBQueriesManager(DBConnector):
             return False
 
     def get_bd_name(self):
-        return self._dbconfig.get("database")
+        return self.db_name
 
     def get_converting_SQLquery(self, query: str, *args) -> Tuple[str, List]:
         placeholders = []
