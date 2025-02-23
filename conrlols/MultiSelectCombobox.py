@@ -1,16 +1,11 @@
 import tkinter as tk
-from tkinter import messagebox
-
 
 class MultiSelectCombobox:
     def __init__(self, frame, options):
 
-        # Создаем основной фрейм
         self.frame = tk.Frame(frame)
         # self.frame.grid(row=1, column=1, padx=1, pady=1)
-        # Список элементов для выбора
         self.options = options
-        # Список переменных для чекбоксов
         self.check_vars = []
 
         # Создаем Canvas для прокрутки
@@ -24,16 +19,10 @@ class MultiSelectCombobox:
         # Связываем Scrollbar с Canvas
         self.canvas.config(yscrollcommand=self.scrollbar.set)
 
-        # Создаем фрейм, который будет размещен внутри Canvas
         self.checkbutton_frame = tk.Frame(self.canvas)
-
-        # Размещение фрейма на Canvas
         self.canvas.create_window((0, 0), window=self.checkbutton_frame)
-
-        # Добавляем функциональность прокрутки колесиком мыши
         self.canvas.bind("<MouseWheel>", self.on_mouse_wheel)
 
-        # Создаем чекбоксы
         self.create_checkbuttons()
 
     def create_checkbuttons(self):
@@ -43,7 +32,6 @@ class MultiSelectCombobox:
             checkbutton = tk.Checkbutton(self.checkbutton_frame, text=option, variable=var, onvalue=option, offvalue="")
             checkbutton.grid(row=i, column=0, sticky="w")
 
-        # Обновляем область канваса, чтобы прокрутка работала
         self.checkbutton_frame.update_idletasks()
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
 
