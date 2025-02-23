@@ -7,7 +7,7 @@ from db.sql_queries import FilmQueries, SearchCriteriaFilm
 
 
 class LoggingDictCursor(DictCursor):
-    def execute(self, query, params: Tuple = (), selected_years: str = "", selected_genres: str = "", text_title_discr: str = ""):
+    def execute(self, query, params: Tuple = ()):
 
         print(f"Выполняется запрос: {query} с параметрами {params}")
         # try:
