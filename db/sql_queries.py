@@ -28,3 +28,7 @@ class SearchCriteriaFilm:
     INSERT_CRITERIAFILM = """ insert
                             into search_criteria_film(category_by_words, pquery)
                             values(%s, %s)"""
+    GET_LAST_SEARCH = """select cdate, IF(category_by_words = '', 'Без криткриев', replace(category_by_words, '%%', '')) category_by_words 
+                            from search_criteria_film 
+                            order by cdate desc 
+                            limit 20"""

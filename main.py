@@ -6,6 +6,8 @@ from db.db_configs_manager import DBConfigManager
 from db.db_queries_manager import DBQueriesManager
 from db.sql_queries import CategoryQueries, FilmQueries, SearchCriteriaFilm
 import re
+from file_manager import FileManager
+
 
 # Получаем объект работы с БД
 def get_query_handler(par_db_name: str) -> Optional[DBQueriesManager]:
@@ -14,25 +16,41 @@ def get_query_handler(par_db_name: str) -> Optional[DBQueriesManager]:
         dbconfig = obj_dbconfig.get_config(db_name=par_db_name)
         return DBQueriesManager(dbconfig)
     except Exception as e:
-        print(f"Ошибка при : {e}")
+        print(f"Ошибка [get_query_handler] : {e}")
         return None
 
 # Вставка в БД критериев поиска
 def execute_query(params) -> None:
-    handler_write = get_query_handler("DBCONFIG_ICH_EDIT")
     if handler_write:
         handler_write.execute_ins_upd_del(SearchCriteriaFilm.INSERT_CRITERIAFILM, params)
 
+# Берем последние 20 запросов
+def last_search():
+    query = SearchCriteriaFilm.GET_LAST_SEARCH
+    records = handler_write.get_records(query)
+    if records:
+        result_search = "\n".join([f"Дата: {record.get('cdate')} - {record.get('category_by_words')}" for record in records])
+
+    final_memo = f"Последние 20 поисков:\n\n{result_search}"
+    set_data_in_memo(final_memo)
+
 # Выход из программы
 def exit_program():
+    handler_read.close()
+    handler_write.close()
     root.quit()
+
+# Запись в файл
+def save_file():
+    text_from_memo = memo_field.get("1.0", tk.END).strip()
+    file_manager = FileManager(text_from_memo)
+    file_manager.save_file()
 
 # Функция поиска фильмов по критериям
 def search():
-
     selected_years = [var.get() for var in year_cb.check_vars if var.get()]
     selected_genres = [var.get() for var in genre_cb.check_vars if var.get()]
-    text_title_discr = keyword_entry.get("1.0", tk.END).strip()
+    text_title_discr = title_discr_entry.get("1.0", tk.END).strip()
 
 # --> Получаем и формируем нужный запрос
     query = FilmQueries.GET_FILM_BY_CATEGORYS
@@ -60,9 +78,9 @@ def search():
 # <--
 
     # handler = get_query_handler("DBCONFIG_SAKILA")
-    if handler:
-        query, params = handler.get_converting_SQLquery(query, selected_genres, selected_years, *text_title_discr)
-        res = handler.get_records(query, params)
+    if handler_read:
+        query, params = handler_read.get_converting_SQLquery(query, selected_genres, selected_years, *text_title_discr)
+        res = handler_read.get_records(query, params)
 
         execute_params = [','.join(params), query]
         execute_query(execute_params)
@@ -71,11 +89,15 @@ def search():
         if res:
             result_search = "\n".join([f"Название: {i.get('title')} ({i.get('length')} мин)\nЖанр: {i.get('name_category')} Год: {i.get('release_year')}\nОписание: {i.get('description')}\n{'-' * 50}" for i in res])
 
-        search_criteria = f"Ключевое слово: {keyword_entry.get('1.0', 'end-1c')}\nЖанр: {', '.join(selected_genres)}\nГод: {', '.join(selected_years)}"
-        memo_field.config(state="normal")
-        memo_field.delete(1.0, tk.END)
-        memo_field.insert(tk.END, f"Критерии поиска:\n{search_criteria}\n\nНайдено: {len(res)}\n{result_search}")
-        memo_field.config(state="disabled")
+        search_criteria = f"Ключевое слово: {title_discr_entry.get('1.0', 'end-1c')}\nЖанр: {', '.join(selected_genres)}\nГод: {', '.join(selected_years)}"
+        final_memo = f"Критерии поиска:\n{search_criteria}\n\nНайдено: {len(res)}\n{result_search}"
+        set_data_in_memo(final_memo)
+
+def set_data_in_memo(data):
+    memo_field.config(state="normal")
+    memo_field.delete(1.0, tk.END)
+    memo_field.insert(tk.END, data)
+    memo_field.config(state="disabled")
 
 # Создание интерфейса
 def create_ui():
@@ -97,11 +119,11 @@ def create_ui():
     label_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
     # Поля для ввода
-    keyword_label = tk.Label(label_frame, text="Ключевое слово (через запятую):", font=("Arial", 10))
-    keyword_label.grid(row=0, column=0, sticky="w", padx=10, pady=1)
-    global keyword_entry
-    keyword_entry = tk.Text(label_frame, wrap="word", font=("Arial", 12), width=25, height=5)
-    keyword_entry.grid(row=1, column=0, padx=10, pady=1)
+    title_discr_label = tk.Label(label_frame, text="Ключевое слово (через запятую):", font=("Arial", 10))
+    title_discr_label.grid(row=0, column=0, sticky="w", padx=10, pady=1)
+    global title_discr_entry
+    title_discr_entry = tk.Text(label_frame, wrap="word", font=("Arial", 12), width=25, height=5)
+    title_discr_entry.grid(row=1, column=0, padx=10, pady=1)
 
     genre_label = tk.Label(label_frame, text="Жанр (через запятую):", font=("Arial", 10))
     genre_label.grid(row=0, column=1, sticky="w", padx=10, pady=1)
@@ -117,12 +139,13 @@ def create_ui():
 
     # Кнопки
     search_button = CustomButton(bottom_frame, "Поиск", search, 0, 1, "#3e8e41", "#4CAF50")
-    report_button = CustomButton(bottom_frame, "Поп. запросы", exit_program, 0, 2, "#3e8e41", "#4CAF50")
-    file_button = CustomButton(bottom_frame, "В файл", exit_program, 0, 3, "#3e8e41", "#4CAF50")
+    report_button = CustomButton(bottom_frame, "Посл. запросы", last_search, 0, 2, "#3e8e41", "#4CAF50")
+    file_button = CustomButton(bottom_frame, "В файл", save_file, 0, 3, "#3e8e41", "#4CAF50")
     exit_button = CustomButton(bottom_frame, "Выход", exit_program, 0, 4, "#D32F2F", "#f44336")
 
     db_name_label = tk.Label(bottom_frame, text="БД:", font=("Arial", 10))
-    db_name_label.config(text="БД: " + handler.get_bd_name())
+    db_name_label.config(text=f"БД на чтение: {handler_read.get_bd_name()}\n"
+                              f"БД на запись: {handler_write.get_bd_name()}")
     db_name_label.grid(row=0, column=0, sticky="w", padx=10, pady=1)
 
     root.grid_rowconfigure(0, weight=1)
@@ -131,12 +154,13 @@ def create_ui():
     return root
 
 if __name__ == "__main__":
-    handler = get_query_handler("DBCONFIG_SAKILA")
-    if handler:
-        record = handler.get_records(query=CategoryQueries.GET_ALL_CATEGORYS)
+    handler_read = get_query_handler("DBCONFIG_SAKILA")
+    handler_write = get_query_handler("DBCONFIG_ICH_EDIT")
+    if handler_read:
+        record = handler_read.get_records(query=CategoryQueries.GET_ALL_CATEGORYS)
         genres = [name_category["name_categorys"] for name_category in record]
 
-        record = handler.get_records(query=FilmQueries.GET_ALL_YEAR)
+        record = handler_read.get_records(query=FilmQueries.GET_ALL_YEAR)
         years = [year["release_year"] for year in record]
 
     root = create_ui()

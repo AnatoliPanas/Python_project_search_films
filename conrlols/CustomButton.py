@@ -2,7 +2,7 @@ import tkinter as tk
 
 class CustomButton:
     def __init__(self, parent, text, command, row, column, bg, hover_bg, font=("Arial", 10, "bold"), fg="white",
-                 height=2, width=10):
+                 height=2, width=11):
         self.button = tk.Button(parent,
                                 text=text,
                                 command=command,

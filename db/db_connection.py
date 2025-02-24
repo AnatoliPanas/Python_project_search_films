@@ -13,8 +13,7 @@ class DBConnector:
         self.db_name: str = dbconfig.get("database")
         self._connection: Optional[Connection] = self._set_connection()
         self._cursor: Optional[Cursor] = self._set_cursor()
-        logger.info(f"Создание DBConnector с конфигурацией БД: {self.db_name}")
-
+        logger.info(f"Создание DBConnector с конфигурацией БД: {self.db_name} - выполнено.")
 
     def _set_connection(self) -> Optional[Connection]:
         try:
@@ -29,7 +28,7 @@ class DBConnector:
         if self._connection:
             try:
                 cursor = self._connection.cursor()
-                logger.info("Создан курсор для выполнения запросов.")
+                logger.info("Создание курсор для выполнения запросов в БД: {self.db_name} - выполнено.")
                 return cursor
             except pymysql.MySQLError as e:
                 logger.error(f"Ошибка создания курсора: {e}")
@@ -59,5 +58,5 @@ class DBConnector:
         if hasattr(self, '_connection') and hasattr(self, '_cursor'):
             self._cursor.close()
             self._connection.close()
-            logger.info(f"Подключение к БД: {self.db_name} и курсор закрыты.")
+            logger.info(f"Подключение и курсор к БД: {self.db_name}закрыты.")
 
