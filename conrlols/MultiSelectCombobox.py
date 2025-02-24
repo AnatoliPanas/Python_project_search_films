@@ -25,6 +25,8 @@ class MultiSelectCombobox:
 
         self.create_checkbuttons()
 
+        self.canvas.yview_moveto(0)
+
     def create_checkbuttons(self):
         for i, option in enumerate(self.options):
             var = tk.StringVar()
