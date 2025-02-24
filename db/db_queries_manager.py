@@ -1,18 +1,13 @@
 import pymysql, logging
 from pymysql.cursors import DictCursor
+from Utils.custom_logger import CustomLogger
 from db.db_connection import DBConnector
 from typing import List, Tuple, Optional, Dict
 
-from db.sql_queries import FilmQueries, SearchCriteriaFilm
-
-logging.basicConfig(level=logging.INFO)
-# Чтобы знать с какого модуля сообщение
-logger = logging.getLogger(__name__)
-
 class LoggingDictCursor(DictCursor):
     def execute(self, query: str, params: Tuple = ()):
+        print(f"Выполняется запрос: {query} с параметрами {params}")
 
-        logger.info(f"Выполняется запрос: {query} с параметрами {params}")
         # try:
             # log_query = """
             # log_query = SearchCriteriaFilm.INSERT_CRITERIAFILM
@@ -23,11 +18,10 @@ class LoggingDictCursor(DictCursor):
         try:
             return super().execute(query, params)
         except pymysql.MySQLError as e:
-            logger.error(f"Ошибка выполнения запроса: {e}")
+            print(f"Ошибка выполнения запроса: {e}")
 
 class DBQueriesManager(DBConnector):
     def __init__(self, dbconfig):
-        self._dbconfig = dbconfig
         super().__init__(dbconfig)
 
     def get_records(self, query: str, params = ()) -> Optional[List]:
@@ -37,7 +31,7 @@ class DBQueriesManager(DBConnector):
             records = cursor.fetchall()
             return records
         except pymysql.MySQLError as e:
-            logger.error(f"Ошибка выполнения запроса [get_records]: {e}")
+            self.get_logger().error(f"Ошибка выполнения запроса [get_records]: {e}")
             return None
 
     def get_record(self, query: str, params = ()) -> Optional[Dict]:
@@ -47,7 +41,7 @@ class DBQueriesManager(DBConnector):
             record = cursor.fetchone()
             return record
         except pymysql.MySQLError as e:
-            logger.error(f"Ошибка выполнения запроса [get_record]: {e}")
+            self.get_logger().error(f"Ошибка выполнения запроса [get_record]: {e}")
             return None
 
     def execute_ins_upd_del(self, query: str, params: Tuple = ()) -> bool:
@@ -57,12 +51,9 @@ class DBQueriesManager(DBConnector):
             self.commit()
             return True
         except pymysql.MySQLError as e:
-            logger.error(f"Ошибка выполнения запроса [execute_ins_upd_del]: {e}")
+            self.get_logger().error(f"Ошибка выполнения запроса [execute_ins_upd_del]: {e}")
             self.rollback()
             return False
-
-    def get_bd_name(self):
-        return self.db_name
 
     def get_converting_SQLquery(self, query: str, *args) -> Tuple[str, List]:
         placeholders = []
