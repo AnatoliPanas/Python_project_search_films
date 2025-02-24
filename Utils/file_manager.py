@@ -13,7 +13,7 @@ class FileManager(CustomLogger):
 
     def create_dir(self) -> Optional[Path]:
         try:
-            dir_path = Path(__file__).parent / self._name_file_dir
+            dir_path = Path(__file__).parent.parent / self._name_file_dir
             if not dir_path.exists():
                 dir_path.mkdir()
                 self.get_logger().info(f"Создание директории: {dir_path} - выполнено.")
