@@ -96,17 +96,17 @@ python main.py
 - База данных Sakila должна быть предварительно загружена в MySQL.
 - База данных для хранения истории запросов и последних поисков 160924_panas_search_film должна быть предварительно создана:
 ```
-CREATE database 160924_panas_search_film;
+CREATE database <ваша_БД>;
 
 -- Таблица для Популярных запросов пользователей по фильму
-CREATE TABLE 160924_panas_search_film.search_criteria_film (
-    id INT PRIMARY KEY AUTO_INCREMENT comment "Уникальный идентификатор",
-	name_category VARCHAR(250) comment "Имя жанра(категории)",
-    release_year numeric comment "Год релиза",
-    category_by_words text comment "Критерий по словам",
-    pquery text not null comment "Запрос", 
-    cdate datetime not null default now() comment "Дата вставки"
-) comment = "Таблица для популярных запросов пользователей по фильму";
+CREATE TABLE IF NOT EXISTS <ваша_БД>.search_criteria_film (
+    id INT PRIMARY KEY AUTO_INCREMENT COMMENT "Уникальный идентификатор",
+    name_category VARCHAR(250) COMMENT "Имя жанра(категории)",
+    release_year NUMERIC COMMENT "Год релиза",
+    category_by_words TEXT COMMENT "Критерий по словам",
+    pquery TEXT NOT NULL COMMENT "Запрос", 
+    cdate DATETIME NOT NULL DEFAULT NOW() COMMENT "Дата вставки"
+) COMMENT = "Таблица для популярных запросов пользователей по фильму";
 ```
 
 ## Автор
