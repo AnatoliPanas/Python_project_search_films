@@ -13,6 +13,7 @@ from Utils.file_manager import FileManager
 
 class FilmSearchUI(CustomLogger):
     def __init__(self, root):
+        super().__init__(name=__name__)
         self.root = root
         self.root.title("Поиск фильмов")
         self.root.geometry("800x830")
