@@ -10,15 +10,19 @@ from db.sql_queries import CategoryQueries, FilmQueries, SearchCriteriaFilm
 import re
 from Utils.file_manager import FileManager
 
+frame_bg = "#fafafa" #"#585858"
+control_bg = "#333333"  # "#f0f0f0"
+control_fg = "#FFFFFF"
+
 
 class FilmSearchUI(CustomLogger):
     def __init__(self, root):
         super().__init__(name=__name__)
         self.root = root
-        self.root.title("Поиск фильмов")
+        self.root.title("Поиск фильмов", )
         self.root.geometry("800x830")
         self.root.resizable(False, False)
-        self.root.configure(bg="#fafafa")
+        self.root.configure(bg=frame_bg)
 
         self.memo_field = None
         self.title_discr_entry = None
@@ -33,32 +37,51 @@ class FilmSearchUI(CustomLogger):
         self.create_ui()
 
     def create_ui(self):
-        search_frame = tk.Frame(self.root, bg="#fafafa")
+        search_frame = tk.Frame(self.root, bg=frame_bg)
         search_frame.grid(row=0, column=0, padx=10, pady=5)
 
-        self.memo_field = tk.Text(self.root, wrap="word", state="disabled", font=("Courier New", 12), bg="#f0f0f0", bd=0,
-                     highlightthickness=1, highlightbackground="#c0c0c0", highlightcolor="#c0c0c0", relief="flat")
+        self.memo_field = tk.Text(self.root, wrap="word",
+                                  state="disabled",
+                                  font=("Courier New", 12),
+                                  bg=control_bg,
+                                  bd=0,
+                                  highlightthickness=1,
+                                  highlightbackground="#c0c0c0",
+                                  highlightcolor="#c0c0c0",
+                                  relief="flat",
+                                  fg=control_fg)
         self.memo_field.grid(row=1, column=0, padx=10, pady=5)
 
-        bottom_frame = tk.Frame(self.root, bg="#fafafa")
+        bottom_frame = tk.Frame(self.root, bg=frame_bg)
         bottom_frame.grid(row=2, column=0, padx=10, pady=5, sticky="es")
 
-        label_frame = tk.LabelFrame(search_frame, text="Введите критерий поиска", font=("Courier New", 12, "bold"), padx=10,
-                                    pady=10, bg="#fafafa")
+        label_frame = tk.LabelFrame(search_frame, text="Введите критерий поиска", font=("Courier New", 12, "bold"),
+                                    padx=10,
+                                    pady=10, bg=frame_bg)
         label_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
-        title_discr_label = tk.Label(label_frame, text="Ключевое слово (через запятую):", font=("Courier New", 10), bg="#fafafa")
+        title_discr_label = tk.Label(label_frame, text="Ключевое слово (через запятую):", font=("Courier New", 10),
+                                     bg=frame_bg)
         title_discr_label.grid(row=0, column=0, sticky="w", padx=10, pady=1)
-        self.title_discr_entry = tk.Text(label_frame, wrap="word",font=("Courier New", 12), bg="#f0f0f0", bd=0,
-                     highlightthickness=1, highlightbackground="#c0c0c0", highlightcolor="#c0c0c0", relief="flat", width=25, height=5)
+        self.title_discr_entry = tk.Text(label_frame,
+                                         wrap="word",
+                                         font=("Courier New", 12),
+                                         bg="#f0f0f0",
+                                         bd=0,
+                                         highlightthickness=1,
+                                         highlightbackground="#c0c0c0",
+                                         highlightcolor="#c0c0c0",
+                                         relief="flat",
+                                         width=25,
+                                         height=10)
         self.title_discr_entry.grid(row=1, column=0, padx=10, pady=1)
 
-        genre_label = tk.Label(label_frame, text="Жанр:", font=("Courier New", 10), bg="#fafafa")
+        genre_label = tk.Label(label_frame, text="Жанр:", font=("Courier New", 10), bg=frame_bg)
         genre_label.grid(row=0, column=1, sticky="w", padx=10, pady=1)
         self.genre_cb = MultiSelectCombobox(label_frame, self.genres)
         self.genre_cb.frame.grid(row=1, column=1, padx=10, pady=1, sticky="n")
 
-        year_label = tk.Label(label_frame, text="Год:", font=("Courier New", 10), bg="#fafafa")
+        year_label = tk.Label(label_frame, text="Год:", font=("Courier New", 10), bg=frame_bg)
         year_label.grid(row=0, column=2, sticky="w", padx=10, pady=1)
         self.year_cb = MultiSelectCombobox(label_frame, self.years)
         self.year_cb.frame.grid(row=1, column=2, padx=10, pady=1, sticky="n")
@@ -68,7 +91,7 @@ class FilmSearchUI(CustomLogger):
         CustomButton(bottom_frame, "В файл", self.save_file, 0, 3, "#4b7a4f", "#6c8e6b")
         CustomButton(bottom_frame, "Выход", self.exit_program, 0, 4, "#c0392b", "#e74c3c")
 
-        db_name_label = tk.Label(bottom_frame, text="БД:", font=("Courier New", 10), bg="#fafafa")
+        db_name_label = tk.Label(bottom_frame, text="БД:", font=("Courier New", 10), bg=frame_bg)
         db_name_label.config(text=f"БД на чтение: {self.handler_read.get_bd_name()}\n"
                                   f"БД на запись: {self.handler_write.get_bd_name()}")
         db_name_label.grid(row=0, column=0, sticky="w", padx=10, pady=1)
@@ -154,8 +177,8 @@ class FilmSearchUI(CustomLogger):
                 result_search = ""
                 if res:
                     result_search = "\n".join([
-                                                  f"Название: {i.get('title')} ({i.get('length')} мин)\nЖанр: {i.get('name_category')} Год: {i.get('release_year')}\nОписание: {i.get('description')}\n{'-' * 50}"
-                                                  for i in res])
+                        f"{i.get('title')} ({i.get('release_year')})\nЖанр: {i.get('name_category')} ({i.get('length')} мин)\nОписание: {i.get('description')}\n{'-' * 50}"
+                        for i in res])
 
                 search_criteria = f"Ключевое слово: {self.title_discr_entry.get('1.0', 'end-1c')}\nЖанр: {', '.join(selected_genres)}\nГод: {', '.join(selected_years)}"
                 final_memo = f"Критерии поиска:\n{search_criteria}\n\nНайдено: {len(res)}\n{result_search}"
@@ -179,7 +202,6 @@ class FilmSearchUI(CustomLogger):
 
             record = self.handler_read.get_records(query=FilmQueries.GET_ALL_YEAR)
             self.years = [year["release_year"] for year in record]
-
 
     def get_query_handler(self, par_db_name: str) -> Optional[DBQueriesManager]:
         try:
