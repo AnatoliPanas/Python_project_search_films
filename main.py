@@ -18,6 +18,7 @@ class FilmSearchUI(CustomLogger):
         self.root.title("Поиск фильмов")
         self.root.geometry("800x830")
         self.root.resizable(False, False)
+        self.root.configure(bg="#fafafa")
 
         self.memo_field = None
         self.title_discr_entry = None
@@ -32,40 +33,42 @@ class FilmSearchUI(CustomLogger):
         self.create_ui()
 
     def create_ui(self):
-        search_frame = tk.Frame(self.root)
+        search_frame = tk.Frame(self.root, bg="#fafafa")
         search_frame.grid(row=0, column=0, padx=10, pady=5)
 
-        self.memo_field = tk.Text(self.root, wrap="word", state="disabled", font=("Arial", 12))
+        self.memo_field = tk.Text(self.root, wrap="word", state="disabled", font=("Courier New", 12), bg="#f0f0f0", bd=0,
+                     highlightthickness=1, highlightbackground="#c0c0c0", highlightcolor="#c0c0c0", relief="flat")
         self.memo_field.grid(row=1, column=0, padx=10, pady=5)
 
-        bottom_frame = tk.Frame(self.root)
+        bottom_frame = tk.Frame(self.root, bg="#fafafa")
         bottom_frame.grid(row=2, column=0, padx=10, pady=5, sticky="es")
 
-        label_frame = tk.LabelFrame(search_frame, text="Введите критерий поиска", font=("Arial", 12, "bold"), padx=10,
-                                    pady=10)
+        label_frame = tk.LabelFrame(search_frame, text="Введите критерий поиска", font=("Courier New", 12, "bold"), padx=10,
+                                    pady=10, bg="#fafafa")
         label_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
-        title_discr_label = tk.Label(label_frame, text="Ключевое слово (через запятую):", font=("Arial", 10))
+        title_discr_label = tk.Label(label_frame, text="Ключевое слово (через запятую):", font=("Courier New", 10), bg="#fafafa")
         title_discr_label.grid(row=0, column=0, sticky="w", padx=10, pady=1)
-        self.title_discr_entry = tk.Text(label_frame, wrap="word", font=("Arial", 12), width=25, height=5)
+        self.title_discr_entry = tk.Text(label_frame, wrap="word",font=("Courier New", 12), bg="#f0f0f0", bd=0,
+                     highlightthickness=1, highlightbackground="#c0c0c0", highlightcolor="#c0c0c0", relief="flat", width=25, height=5)
         self.title_discr_entry.grid(row=1, column=0, padx=10, pady=1)
 
-        genre_label = tk.Label(label_frame, text="Жанр (через запятую):", font=("Arial", 10))
+        genre_label = tk.Label(label_frame, text="Жанр:", font=("Courier New", 10), bg="#fafafa")
         genre_label.grid(row=0, column=1, sticky="w", padx=10, pady=1)
         self.genre_cb = MultiSelectCombobox(label_frame, self.genres)
         self.genre_cb.frame.grid(row=1, column=1, padx=10, pady=1, sticky="n")
 
-        year_label = tk.Label(label_frame, text="Год:", font=("Arial", 10))
+        year_label = tk.Label(label_frame, text="Год:", font=("Courier New", 10), bg="#fafafa")
         year_label.grid(row=0, column=2, sticky="w", padx=10, pady=1)
         self.year_cb = MultiSelectCombobox(label_frame, self.years)
         self.year_cb.frame.grid(row=1, column=2, padx=10, pady=1, sticky="n")
 
-        CustomButton(bottom_frame, "Поиск", self.search, 0, 1, "#3e8e41", "#4CAF50")
-        CustomButton(bottom_frame, "Посл. запросы", self.last_search, 0, 2, "#3e8e41", "#4CAF50")
-        CustomButton(bottom_frame, "В файл", self.save_file, 0, 3, "#3e8e41", "#4CAF50")
-        CustomButton(bottom_frame, "Выход", self.exit_program, 0, 4, "#D32F2F", "#f44336")
+        CustomButton(bottom_frame, "Поиск", self.search, 0, 1, "#4b7a4f", "#6c8e6b")
+        CustomButton(bottom_frame, "Посл. запросы", self.last_search, 0, 2, "#4b7a4f", "#6c8e6b")
+        CustomButton(bottom_frame, "В файл", self.save_file, 0, 3, "#4b7a4f", "#6c8e6b")
+        CustomButton(bottom_frame, "Выход", self.exit_program, 0, 4, "#c0392b", "#e74c3c")
 
-        db_name_label = tk.Label(bottom_frame, text="БД:", font=("Arial", 10))
+        db_name_label = tk.Label(bottom_frame, text="БД:", font=("Courier New", 10), bg="#fafafa")
         db_name_label.config(text=f"БД на чтение: {self.handler_read.get_bd_name()}\n"
                                   f"БД на запись: {self.handler_write.get_bd_name()}")
         db_name_label.grid(row=0, column=0, sticky="w", padx=10, pady=1)
@@ -105,7 +108,7 @@ class FilmSearchUI(CustomLogger):
             file_manager = FileManager(text_from_memo)
             file_manager.save_file()
 
-            messagebox.showinfo("Успех", "Данные успешно сохранены в файл.")
+            messagebox.showinfo("Сохранение в файл", "Данные успешно сохранены в файл!")
         except Exception as e:
             self.get_logger().error(f"Ошибка при сохранении в файл: {e}")
 
@@ -145,7 +148,7 @@ class FilmSearchUI(CustomLogger):
                                                                           *text_title_discr)
                 res = self.handler_read.get_records(query, params)
 
-                execute_params = [','.join(params), query]
+                execute_params = [','.join(params), query % tuple(params)]
                 self.execute_query(execute_params)
 
                 result_search = ""

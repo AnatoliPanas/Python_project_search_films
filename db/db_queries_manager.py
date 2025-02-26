@@ -6,7 +6,9 @@ from typing import List, Tuple, Optional, Dict
 
 class LoggingDictCursor(DictCursor):
     def execute(self, query: str, params: Tuple = ()):
-        print(f"Выполняется запрос: {query} с параметрами {params}")
+        formatted_query = query % tuple(params)
+        print(f"Выполняется запрос: {formatted_query}")
+        # print(f"Выполняется запрос: {query} с параметрами {params}")
 
         # try:
             # log_query = """
