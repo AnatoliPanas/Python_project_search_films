@@ -5,8 +5,8 @@ from db.db_connection import DBConnector
 from typing import List, Tuple, Optional, Dict
 
 class LoggingDictCursor(DictCursor):
-    def execute(self, query: str, params: Tuple = ()):
-        formatted_query = query % tuple(params)
+    def execute(self, query: str, pars: Tuple = ()):
+        formatted_query = query % tuple(pars)
         print(f"Выполняется запрос: {formatted_query}")
         # print(f"Выполняется запрос: {query} с параметрами {params}")
 
@@ -18,7 +18,7 @@ class LoggingDictCursor(DictCursor):
         # except pymysql.MySQLError as e:
         #     print(f"Ошибка при записи лога в базу данных: {e}")
         try:
-            return super().execute(query, params)
+            return super().execute(query, pars)
         except pymysql.MySQLError as e:
             print(f"Ошибка выполнения запроса: {e}")
 
