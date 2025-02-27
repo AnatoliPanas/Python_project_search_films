@@ -99,14 +99,12 @@ python main.py
 CREATE database <ваша_БД>;
 
 -- Таблица для Популярных запросов пользователей по фильму
-CREATE TABLE IF NOT EXISTS <ваша_БД>.search_criteria_film (
-    id INT PRIMARY KEY AUTO_INCREMENT COMMENT "Уникальный идентификатор",
-    name_category VARCHAR(250) COMMENT "Имя жанра(категории)",
-    release_year NUMERIC COMMENT "Год релиза",
-    category_by_words TEXT COMMENT "Критерий по словам",
-    pquery TEXT NOT NULL COMMENT "Запрос", 
-    cdate DATETIME NOT NULL DEFAULT NOW() COMMENT "Дата вставки"
-) COMMENT = "Таблица для популярных запросов пользователей по фильму";
+CREATE TABLE IF NOT EXISTS <ваша_БД>.popular_criteria (
+    id INT PRIMARY KEY AUTO_INCREMENT comment "Уникальный идентификатор",
+    category_by_words text comment "Критерий по словам",
+    pquery text not null comment "Запрос", 
+    create_date datetime not null default now() comment "Дата вставки"
+) comment = "Таблица для популярных запросов пользователей по фильму";
 ```
 
 ## Автор

@@ -20,11 +20,11 @@ class FilmQueries:
     SET_PARAM_YEARS = "f.release_year in (%s)"
     SET_PARAM_TEXT = " concat(f.title, f.description) like %s "
 
-class SearchCriteriaFilm:
+class PopularCriteriaFilm:
     INSERT_CRITERIA = """ insert
-                            into search_criteria_film(category_by_words, pquery)
+                            into popular_criteria(category_by_words, pquery)
                             values(%s, %s)"""
-    GET_LAST_SEARCH = """select cdate, IF(category_by_words = '', 'Без криткриев', replace(category_by_words, '%%', '')) category_by_words 
-                            from search_criteria_film 
-                            order by cdate desc 
+    GET_LAST_SEARCH = """select create_date, IF(category_by_words = '', 'Без криткриев', replace(category_by_words, '%%', '')) category_by_words 
+                            from popular_criteria 
+                            order by create_date desc 
                             limit 20"""

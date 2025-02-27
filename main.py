@@ -6,7 +6,7 @@ from conrlols.CustomButton import CustomButton
 from conrlols.MultiSelectCombobox import MultiSelectCombobox
 from db.db_configs_manager import DBConfigManager
 from db.db_queries_manager import DBQueriesManager
-from db.sql_queries import CategoryQueries, FilmQueries, SearchCriteriaFilm
+from db.sql_queries import CategoryQueries, FilmQueries, PopularCriteriaFilm
 import re
 from Utils.file_manager import FileManager
 
@@ -92,18 +92,18 @@ class FilmSearchLogic(CustomLogger):
     def execute_query(self, params) -> None:
         try:
             if self.handler_write:
-                self.handler_write.execute_ins_upd_del(SearchCriteriaFilm.INSERT_CRITERIA, params)
+                self.handler_write.execute_ins_upd_del(PopularCriteriaFilm.INSERT_CRITERIA, params)
         except Exception as e:
             self.get_logger().error(f"Ошибка при выполнении запроса: {e}")
             raise
 
     def get_last_search(self):
-        query = SearchCriteriaFilm.GET_LAST_SEARCH
+        query = PopularCriteriaFilm.GET_LAST_SEARCH
         try:
             records = self.handler_write.get_records(query)
             if records:
                 result_search = "\n".join(
-                    [f"Дата: {record.get('cdate')} - {record.get('category_by_words')}" for record in records])
+                    [f"Дата: {record.get('create_date')} - {record.get('category_by_words')}" for record in records])
             final_memo = f"Последние 20 поисков:\n\n{result_search}"
             return final_memo
         except Exception as e:
