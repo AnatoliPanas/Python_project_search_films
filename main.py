@@ -101,6 +101,7 @@ class FilmSearchLogic(CustomLogger):
         query = PopularCriteriaFilm.GET_LAST_SEARCH
         try:
             records = self.handler_write.get_records(query)
+            result_search = ""
             if records:
                 result_search = "\n".join(
                     [f"Дата: {record.get('create_date')} - {record.get('category_by_words')}" for record in records])
@@ -111,13 +112,13 @@ class FilmSearchLogic(CustomLogger):
             raise
 
 class FilmSearchUI(CustomLogger):
-    def __init__(self, root):
+    def __init__(self, par_root_tk):
         super().__init__(name=__name__)
-        self.root = root
-        self.root.title("Поиск фильмов")
-        self.root.geometry("800x830")
-        self.root.resizable(False, False)
-        self.root.configure(bg=FRAME_BG)
+        self.root_tk = par_root_tk
+        self.root_tk.title("Поиск фильмов")
+        self.root_tk.geometry("800x830")
+        self.root_tk.resizable(False, False)
+        self.root_tk.configure(bg=FRAME_BG)
 
         self.memo_field = None
         self.title_discr_entry = None
@@ -136,10 +137,10 @@ class FilmSearchUI(CustomLogger):
         self.create_ui()
 
     def create_ui(self):
-        search_frame = tk.Frame(self.root, bg=FRAME_BG)
+        search_frame = tk.Frame(self.root_tk, bg=FRAME_BG)
         search_frame.grid(row=0, column=0, padx=10, pady=5)
 
-        self.memo_field = tk.Text(self.root, wrap="word",
+        self.memo_field = tk.Text(self.root_tk, wrap="word",
                                   state="disabled",
                                   font=("Courier New", 12),
                                   bg=CONTROL_BG,
@@ -151,7 +152,7 @@ class FilmSearchUI(CustomLogger):
                                   fg=CONTROL_FG)
         self.memo_field.grid(row=1, column=0, padx=10, pady=5)
 
-        bottom_frame = tk.Frame(self.root, bg=FRAME_BG)
+        bottom_frame = tk.Frame(self.root_tk, bg=FRAME_BG)
         bottom_frame.grid(row=2, column=0, padx=10, pady=5, sticky="es")
 
         label_frame = tk.LabelFrame(search_frame, text="Введите критерий поиска", font=("Courier New", 12, "bold"),
@@ -195,8 +196,8 @@ class FilmSearchUI(CustomLogger):
                                   f"БД на запись: {self.handler_write.get_bd_name()}")
         db_name_label.grid(row=0, column=0, sticky="w", padx=10, pady=1)
 
-        self.root.grid_rowconfigure(0, weight=1)
-        self.root.grid_columnconfigure(0, weight=1)
+        self.root_tk.grid_rowconfigure(0, weight=1)
+        self.root_tk.grid_columnconfigure(0, weight=1)
 
     def set_data_in_memo(self, data):
         self.memo_field.config(state="normal")
@@ -215,7 +216,7 @@ class FilmSearchUI(CustomLogger):
         try:
             self.handler_read.close()
             self.handler_write.close()
-            self.root.quit()
+            self.root_tk.quit()
         except Exception as e:
             self.get_logger().error(f"Ошибка при закрытии программы: {e}")
 
@@ -241,6 +242,6 @@ class FilmSearchUI(CustomLogger):
             self.get_logger().error(f"Ошибка при поиске фильмов: {e}")
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    ui = FilmSearchUI(root)
-    root.mainloop()
+    root_tk = tk.Tk()
+    ui = FilmSearchUI(root_tk)
+    root_tk.mainloop()
